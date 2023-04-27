@@ -1,0 +1,44 @@
+https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/
+
+
+https://www.talos.dev/v1.3/kubernetes-guides/configuration/deploy-metrics-server
+
+^^ The version of k8s already has the rotate-server-certs thing in its
+   kubelet.yaml.
+
+Add this to clusterapi's workload.yaml, in TalosControlPlane:
+
+```
+       - op: add
+         path: /machine/kubelet/extraConfig
+         value:
+           serverTLSBootstrap: true
+```
+
+See that serverTLSBootstrap landed in kubelet config:
+
+  $ talosctl -n $vip --talosconfig talosconfig cat /etc/kubernetes/kubelet.yaml
+
+  You'll also see rotateCertificates in that config.
+
+Approve the certificate so talos can complete all of its bootup steps:
+
+  kubectl --kubeconfig kubeconfig get csr
+  kubectl --kubeconfig kubeconfig certificate approve <cert>
+
+Then apply the kubelet-serving-cert-approver, and then metrics-server, as
+shown in talos doc above.
+
+  ^^ That is never run when added to extraManifests as shown in talos doc.
+     Maybe it's a proxy thing in CF lab?
+     Anyway, works if you do the steps manually.
+
+Try something: see if that cert-approver will approve the cert that was
+causing talos to not complete its boot steps.
+
+Then try the workload generator from the kubernetes.io doc above.
+
+kubectl port-forward service/php-apache 8001:80
+
+
+

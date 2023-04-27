@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+  labels:
+    app.kubernetes.io/name: MyApp
+spec:
+  containers:
+  - name: myapp-container
+    image: busybox:1.28
+    command: ['sh', '-c', 'echo The app is running! && /bin/ls -al /mnt/sentinel && sleep 3600']
+    volumeMounts:
+    - mountPath: /mnt/sentinel
+      name: sentinel-volume
+  initContainers:
+  - name: init-myservice
+    image: busybox:1.28
+    command: ['sh', '-c', "touch /mnt/sentinel/init-done1"]
+    volumeMounts:
+    - mountPath: /mnt/sentinel
+      name: sentinel-volume
+  - name: init-mydb
+    image: busybox:1.28
+    command: ['sh', '-c', "touch /mnt/sentinel/init-done2"]
+    volumeMounts:
+    - mountPath: /mnt/sentinel
+      name: sentinel-volume
+  volumes:
+  - name: sentinel-volume
+    emptyDir: {}
+
+

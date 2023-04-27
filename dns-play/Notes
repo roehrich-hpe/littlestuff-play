@@ -1,0 +1,25 @@
+https://medium.com/kubernetes-tutorials/kubernetes-dns-for-services-and-pods-664804211501
+
+
+$ docker run -p 8080:80 -it --rm python:3.9 python -m http.server 80
+
+$ curl http://127.0.0.1:8080
+
+
+Apply the deployment:
+
+```console
+[droehrich@dill04 capi-3]$ kubectl get pods -A -o wide | grep test-deployment 
+olivetree-system   test-deployment-6ff5c9cd49-bcj72        1/1     Running   0               7m24s   10.244.1.10      talos-glk-ixb   <none>           <none>
+olivetree-system   test-deployment-6ff5c9cd49-n6th2        1/1     Running   0               7m24s   10.244.2.6       talos-9tm-gbt   <none>           <none>
+olivetree-system   test-deployment-6ff5c9cd49-wkhjw        1/1     Running   0               7m24s   10.244.1.11      talos-glk-ixb   <none>           <none>
+```
+
+Then from another pod:
+
+```console
+$ kubectl exec -it -n olivetree-system   olivetree-controller-manager-v2qvn -- bash
+[root@olivetree-controller-manager-v2qvn /]# curl 10-244-1-10.olivetree-system.pod.cluster.local:80
+```
+
+

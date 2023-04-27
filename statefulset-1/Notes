@@ -1,0 +1,23 @@
+https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+
+kubectl port-forward service/nginx 8001:80
+
+# busybox nslookup
+$ kubectl run -i --tty --image busybox:1.28 dns-test --restart=Never --rm
+  / # nslookup web-1.nginx
+    Server:    10.96.0.10
+    Address 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local
+
+    Name:      web-1.nginx
+    Address 1: 10.244.2.30 web-1.nginx.default.svc.cluster.local
+
+  / # nslookup nginx.default.svc.cluster.local
+    Server:    10.96.0.10
+    Address 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local
+
+    Name:      nginx.default.svc.cluster.local
+    Address 1: 10.244.1.41 web-0.nginx.default.svc.cluster.local
+    Address 2: 10.244.2.31 web-1.nginx.default.svc.cluster.local
+    Address 3: 10.244.1.40 web-2.nginx.default.svc.cluster.local
+
+
